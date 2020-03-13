@@ -5,6 +5,7 @@
 
 var notesData = require("../db/db.json")
 var fs = require('fs')
+var path = require('path')
 
 // ===============================================================================
 // ROUTING
@@ -30,8 +31,9 @@ module.exports = function(app) {
         var note = req.body
         note.id = notesData.length
         notesData.push(note)
-        fs.writeFileSync('../db/db.json', JSON.stringify(notesData), function() {
-            console.log('Note saved to database')
+        fs.writeFileSync(path.join(__dirname, "../db/db.json"), JSON.stringify(notesData), function(err) {
+            if (err) throw err;
+            console.log('Note saved to database');
         })
         res.json(notesData)
     });
@@ -43,7 +45,8 @@ module.exports = function(app) {
     app.delete('/api/notes/:id', function(req, res) {
         const id = req.params.id
         notesData = notesData.filter(note => note.id != id);
-        fs.writeFileSync('../db/db.json', JSON.stringify(notesData), function() {
+        fs.writeFileSync(path.join(__dirname, "../db/db.json"), JSON.stringify(notesData), function(err) {
+            if (err) throw err;
             console.log('Note saved to database')
         })
         res.json(notesData)
