@@ -3,8 +3,8 @@
 // We are linking our routes to a series of "data" sources.
 // ===============================================================================
 
-var notesData = require("../db/db");
-
+var notesData = require("../db/db.json")
+var fs = require('fs')
 
 // ===============================================================================
 // ROUTING
@@ -17,7 +17,7 @@ module.exports = function(app) {
     // ---------------------------------------------------------------------------
 
     app.get("/api/notes", function(req, res) {
-        res.json(notesData);
+        res.json(notesData); //or res.sendFile(path.join(__dirname, '../db/db.json'))
     });
 
     // API POST Requests
@@ -26,12 +26,28 @@ module.exports = function(app) {
     // ...the JSON is pushed to the appropriate JavaScript array
     // ---------------------------------------------------------------------------
 
-    // app.post("/api/notes", function(req, res) {
-    //     const note = req.body
-    //     Node.id = 
-    // });
+    app.post("/api/notes", function(req, res) {
+        var note = req.body
+        note.id = notesData.length
+        notesData.push(note)
+        fs.writeFileSync('../db/db.json', JSON.stringify(notesData), function() {
+            console.log('Note saved to database')
+        })
+        res.json(notesData)
+    });
 
+    // API DELETE Requests
+    // Below code handles when a user removes data from the server
+    // ---------------------------------------------------------------------------
 
+    app.delete('/api/notes/:id', function(req, res) {
+        const id = req.params.id
+        notesData = notesData.filter(note => note.id != id);
+        fs.writeFileSync('../db/db.json', JSON.stringify(notesData), function() {
+            console.log('Note saved to database')
+        })
+        res.json(notesData)
+    })
 
     // extra code to clear out the table while working with the functionality
 
