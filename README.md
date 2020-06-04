@@ -1,4 +1,4 @@
-# 9.Note_Taker
+# Note_Taker
 
 ## What this project is
 This is an application that can be used to write, save, and delete notes.
